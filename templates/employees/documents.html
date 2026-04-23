@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}My Educational Documents - HR Portal{% endblock %}
+
+{% block content %}
+<div class="space-y-12">
+    <header class="text-center py-12">
+        <h1 style="font-size: 3rem; font-weight: 800; color: #1e293b; margin-bottom: 8px;">Document Vault</h1>
+        <p style="color: #64748b; font-size: 1.125rem;">Securely manage your professional credentials</p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-12">
+        <!-- Document Upload Form -->
+        <section class="lg:col-span-1 bg-white h-fit" style="border-radius: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
+            <div style="padding: 40px;">
+                <div style="display: inline-flex; padding: 15px; background-color: #f8fafc; border-radius: 15px; margin-bottom: 24px;">
+                    <svg style="width: 1.5rem; height: 1.5rem; color: #f97316;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                </div>
+                <h2 style="color: #1e293b; font-size: 1.25rem; font-weight: 800; margin-bottom: 24px;">Upload New File</h2>
+                
+                <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; text-transform: uppercase; margin-bottom: 8px;">Document Type</label>
+                        {{ form.document_type }}
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; text-transform: uppercase; margin-bottom: 8px;">File Attachment</label>
+                        <div style="background-color: #f8fafc; border: 1px dashed #e2e8f0; padding: 20px; border-radius: 15px;">
+                            {{ form.file }}
+                        </div>
+                    </div>
+                    <div style="text-align: center; padding-top: 10px;">
+                        <button type="submit" style="background-color: #f97316; color: #ffffff; padding: 12px 32px; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(249, 115, 22, 0.2); text-transform: uppercase; letter-spacing: 0.05em; font-size: 12px;">
+                            Save Document
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Uploaded Documents List -->
+        <section class="lg:col-span-2 bg-white" style="border-radius: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9;">
+            <div style="padding: 40px;">
+                <div class="flex justify-between items-center mb-8">
+                    <div class="flex items-center space-x-3">
+                        <div style="display: inline-flex; padding: 12px; background-color: #f8fafc; border-radius: 12px;">
+                            <svg style="width: 1.25rem; height: 1.25rem; color: #6366f1;" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path></svg>
+                        </div>
+                        <h2 style="color: #1e293b; font-size: 1.25rem; font-weight: 800;">Uploaded Credentials</h2>
+                    </div>
+                </div>
+
+                {% if documents %}
+                <div class="space-y-4">
+                    {% for doc in documents %}
+                    <div style="background-color: #f8fafc; border: 1px solid #f1f5f9; border-radius: 25px; padding: 25px; display: flex; align-items: center; justify-content: space-between;">
+                        <div class="flex items-center space-x-4">
+                            <div style="padding: 12px; background-color: #ffffff; border-radius: 15px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+                                <svg style="width: 1.5rem; height: 1.5rem; color: #94a3b8;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 style="font-size: 1rem; font-weight: 800; color: #1e293b; margin-bottom: 2px;">{{ doc.get_document_type_display }}</h3>
+                                <p style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase;">{{ doc.uploaded_at|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <a href="{{ doc.file.url }}" target="_blank" style="padding: 10px 20px; background-color: #ffffff; border: 1px solid #e2e8f0; color: #1e293b; border-radius: 50px; font-size: 11px; font-weight: 800; text-transform: uppercase; transition: all 0.2s; text-decoration: none;" class="hover:bg-slate-50">
+                                View File
+                            </a>
+                            <form method="POST" action="{% url 'employees:document_delete' doc.pk %}" onsubmit="return confirm('Delete this document?');">
+                                {% csrf_token %}
+                                <button type="submit" style="background-color: #fee2e2; color: #ef4444; border: none; padding: 10px; border-radius: 12px; cursor: pointer;" class="hover:bg-red-200 transition">
+                                    <svg style="width: 1.25rem; height: 1.25rem;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div style="text-align: center; padding: 60px 0;">
+                    <p style="color: #94a3b8; font-weight: 700; text-transform: uppercase; font-size: 12px;">No documents in your vault.</p>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

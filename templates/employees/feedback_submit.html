@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Performance Feedback - HR Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Feedback Submission Form -->
+        <div class="lg:col-span-1">
+            <div class="bg-white" style="border-radius: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; overflow: hidden; position: sticky; top: 2rem;">
+                <div style="padding: 40px 30px; text-align: center;">
+                    <div style="display: inline-flex; padding: 20px; background-color: #f8fafc; border-radius: 20px; margin-bottom: 24px;">
+                        <svg style="width: 2rem; height: 2rem; color: #f97316;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    </div>
+                    <h2 style="color: #1e293b; font-size: 1.5rem; font-weight: 800; margin-bottom: 8px;">Review Center</h2>
+                    <p style="color: #64748b; font-size: 14px; margin-bottom: 32px;">Share your professional insights</p>
+                    
+                    <form method="post" style="text-align: left; display: flex; flex-direction: column; gap: 20px;">
+                        {% csrf_token %}
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; text-transform: uppercase; margin-bottom: 8px;">Recipient</label>
+                            {{ form.employee }}
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; text-transform: uppercase; margin-bottom: 8px;">Observations</label>
+                            {{ form.comment }}
+                        </div>
+                        <div>
+                            <label style="display: block; font-size: 12px; font-weight: 700; color: #1e293b; text-transform: uppercase; margin-bottom: 8px;">Rating</label>
+                            {{ form.rating }}
+                        </div>
+                        <div style="text-align: center; margin-top: 10px;">
+                            <button type="submit" style="background-color: #ea580c; color: #ffffff; padding: 12px 32px; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.2);">
+                                Publish Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback History -->
+        <div class="lg:col-span-2 space-y-12">
+            <div>
+                <h2 style="text-align: center; font-size: 2.5rem; font-weight: 800; color: #1e293b; margin-bottom: 12px;">Reviews Received</h2>
+                <p style="text-align: center; color: #64748b; margin-bottom: 40px;">What your colleagues and HR are saying</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {% for item in feedback_received %}
+                    <div class="bg-white" style="border-radius: 40px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; text-align: center;">
+                        <div style="display: inline-flex; padding: 15px; background-color: #f8fafc; border-radius: 15px; margin-bottom: 20px;">
+                            <svg style="width: 1.5rem; height: 1.5rem; color: #6366f1;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <h3 style="font-size: 1.25rem; font-weight: 800; color: #1e293b; margin-bottom: 5px;">
+                            {% if item.is_self_evaluation %}Self-Evaluation{% else %}{{ item.reviewer.username }}{% endif %}
+                        </h3>
+                        <p style="color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 15px;">{{ item.created_at|date:"M d, Y" }}</p>
+                        
+                        <div style="display: flex; justify-content: center; gap: 4px; margin-bottom: 20px;">
+                            {% for i in "12345"|make_list %}
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background-color: {% if forloop.counter <= item.rating %}#f59e0b{% else %}#e2e8f0{% endif %};"></div>
+                            {% endfor %}
+                        </div>
+                        
+                        <p style="color: #475569; font-size: 14px; line-height: 1.6; margin-bottom: 25px;">"{{ item.comment }}"</p>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full py-12 text-center text-gray-400 font-bold uppercase tracking-widest text-xs">No reviews recorded.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

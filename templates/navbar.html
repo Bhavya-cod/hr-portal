@@ -1,0 +1,24 @@
+<nav class="bg-gray-900 shadow-md border-b border-gray-800">
+    <div class="container mx-auto px-4 flex justify-between items-center h-16">
+        <a href="{% url 'dashboard:home' %}" class="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500 uppercase">HR Portal</a>
+        
+        <div class="flex items-center space-x-4">
+            {% if user.is_authenticated %}
+                <span class="text-sm text-gray-300">Hello, <strong class="text-white">{{ user.username }}</strong> ({{ user.get_role_display }})</span>
+                <a href="{% url 'dashboard:home' %}" class="text-gray-300 hover:text-yellow-400 transition font-medium">Dashboard</a>
+                
+                {% if user.is_admin %}
+                    <a href="{% url 'employees:employee_list' %}" class="text-gray-300 hover:text-yellow-400 transition font-medium">Employees</a>
+                    <a href="{% url 'attendance:summary' %}" class="text-gray-300 hover:text-yellow-400 transition font-medium">Attendance Logs</a>
+                {% endif %}
+
+                <form action="{% url 'accounts:logout' %}" method="post" class="inline">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold px-5 py-2 rounded-full hover:from-orange-600 hover:to-orange-700 transition shadow-lg">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'accounts:login' %}" class="bg-yellow-400 text-gray-900 font-bold px-6 py-2 rounded-full hover:bg-yellow-500 transition shadow-lg">Login</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>

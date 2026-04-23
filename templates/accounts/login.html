@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - HR Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-10">
+    <div class="bg-white p-8 rounded-xl shadow-lg border border-gray-100">
+        <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-6">Welcome Back</h2>
+        
+        <form method="post" action="{% url 'accounts:login' %}" class="space-y-6">
+            {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="p-3 rounded bg-red-50 text-red-600 text-sm">
+                    Invalid username or password. Please try again.
+                </div>
+            {% endif %}
+
+            <div>
+                <label for="id_username" class="block text-sm font-medium text-gray-700">Username</label>
+                <input type="text" name="username" id="id_username" required
+                       class="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-150 ease-in-out">
+            </div>
+
+            <div>
+                <label for="id_password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" name="password" id="id_password" required
+                       class="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition duration-150 ease-in-out">
+                <div class="mt-2 text-right">
+                    <a href="{% url 'accounts:password_reset' %}" class="text-sm text-orange-600 hover:text-orange-500">Forgot your password?</a>
+                </div>
+            </div>
+
+            <div>
+                <button type="submit" 
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 transition duration-150 ease-in-out">
+                    Sign In
+                </button>
+            </div>
+            
+            <div class="mt-6 text-center">
+                <p class="text-sm text-gray-600">
+                    Don't have an account? 
+                    <a href="{% url 'accounts:signup' %}" class="font-medium text-orange-600 hover:text-orange-500">Sign up here</a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

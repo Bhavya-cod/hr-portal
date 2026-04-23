@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results - Techwing HR{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="mb-8">
+        <h1 class="text-2xl font-extrabold text-slate-800">Search Results</h1>
+        <p class="text-slate-500 mt-2">Showing results for "<span class="font-bold text-indigo-600">{{ q }}</span>"</p>
+    </div>
+
+    {% if not people and not tasks and not documents %}
+    <div class="bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-sm">
+        <div class="bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 text-slate-400" style="width: 64px; height: 64px;">
+            <svg style="width: 32px; height: 32px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </div>
+        <h3 class="text-xl font-bold text-slate-800 mb-2">No results found</h3>
+        <p class="text-slate-500">We couldn't find anything matching "{{ q }}". Try adjusting your search term.</p>
+    </div>
+    {% else %}
+        <div class="space-y-8">
+            <!-- People Section -->
+            {% if people %}
+            <section class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+                    <h3 class="text-lg font-bold text-slate-800">People</h3>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    {% for person in people %}
+                    <div class="p-6 flex items-center gap-4 hover:bg-slate-50 transition">
+                        <div class="w-10 h-10 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg">
+                            {{ person.username|slice:":1"|upper }}
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">{{ person.get_full_name|default:person.username }}</p>
+                            <p class="text-sm text-slate-500">{{ person.get_role_display }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Tasks Section -->
+            {% if tasks %}
+            <section class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+                    <h3 class="text-lg font-bold text-slate-800">Tasks</h3>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    {% for task in tasks %}
+                    <div class="p-6 flex items-center justify-between hover:bg-slate-50 transition">
+                        <div>
+                            <p class="font-bold text-slate-800">{{ task.title }}</p>
+                            <p class="text-sm text-slate-500 mt-1">Assigned to: <span class="font-medium">{{ task.employee.username }}</span> &bull; Created {{ task.created_at|date:"M d, Y" }}</p>
+                        </div>
+                        <div>
+                            {% if task.is_completed %}
+                                <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold">Completed</span>
+                            {% else %}
+                                <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-bold">Pending</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Documents Section -->
+            {% if documents %}
+            <section class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+                <div class="px-6 py-4 border-b border-slate-100 bg-slate-50">
+                    <h3 class="text-lg font-bold text-slate-800">Documents</h3>
+                </div>
+                <div class="divide-y divide-slate-100">
+                    {% for doc in documents %}
+                    <div class="p-6 flex items-center justify-between hover:bg-slate-50 transition">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-blue-50 text-blue-500 flex items-center justify-center rounded-xl" style="width: 40px; height: 40px;">
+                                <svg style="width: 20px; height: 20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            </div>
+                            <div>
+                                <p class="font-bold text-slate-800">{{ doc.get_document_type_display }}</p>
+                                <p class="text-sm text-slate-500 mt-1">Uploaded by: <span class="font-medium">{{ doc.employee.username }}</span> &bull; {{ doc.uploaded_at|date:"M d, Y" }}</p>
+                            </div>
+                        </div>
+                        <a href="{{ doc.file.url }}" target="_blank" class="text-sm font-bold text-indigo-600 hover:text-indigo-800">
+                            View File &rarr;
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

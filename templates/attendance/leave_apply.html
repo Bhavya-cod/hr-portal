@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply for Leave - HR Portal{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-12">
+    <div class="bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-100">
+        <div class="px-8 py-6 border-b border-gray-100">
+            <h2 class="text-2xl font-black text-gray-900 uppercase tracking-tight">Request Leave</h2>
+        </div>
+        
+        <form method="post" class="p-8 space-y-8">
+            {% csrf_token %}
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest">Start Date</label>
+                    {{ form.start_date }}
+                    {% if form.start_date.errors %}
+                        <p class="mt-1 text-xs text-red-600 font-medium">{{ form.start_date.errors.0 }}</p>
+                    {% endif %}
+                </div>
+                <div class="space-y-2">
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest">End Date</label>
+                    {{ form.end_date }}
+                    {% if form.end_date.errors %}
+                        <p class="mt-1 text-xs text-red-600 font-medium">{{ form.end_date.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="space-y-2">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest">Reason</label>
+                {{ form.reason }}
+                {% if form.reason.errors %}
+                    <p class="mt-1 text-xs text-red-600 font-medium">{{ form.reason.errors.0 }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="flex items-center justify-between pt-6 border-t border-gray-50">
+                <a href="{% url 'dashboard:home' %}" class="text-sm font-bold text-gray-400 hover:text-gray-600 transition uppercase tracking-widest">Cancel</a>
+                <button type="submit" style="background-color: #2563eb; color: #ffffff; padding: 12px 40px; border-radius: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; border: none; cursor: pointer; box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.39);">
+                    Submit Request
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

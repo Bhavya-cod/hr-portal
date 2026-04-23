@@ -1,0 +1,59 @@
+<div id="attendance-section-small">
+    {% if next_action %}
+        <form id="attendance-form-small" hx-post="{% url 'attendance:perform_action' %}?source=small" hx-target="#attendance-section-small" hx-swap="outerHTML">
+            <input type="hidden" id="geo-location-small" name="location_name" value="">
+            
+            <button type="button" onclick="submitSmallWithLocation()" id="actionBtnSmall"
+                    style="display: block; width: 100%; background-color: rgba(255,255,255,0.2); text-align: center; padding: 12px; border-radius: 16px; color: white; font-weight: 800; text-decoration: none; font-size: 0.85rem; backdrop-filter: blur(4px); border: none; cursor: pointer;">
+                {% if next_action == 'morning_check_in' %}
+                    Morning In
+                {% elif next_action == 'lunch_check_out' %}
+                    Lunch Out
+                {% elif next_action == 'afternoon_check_in' %}
+                    Afternoon In
+                {% elif next_action == 'final_check_out' %}
+                    Final Out
+                {% endif %}
+            </button>
+        </form>
+        <script>
+            function submitSmallWithLocation() {
+                const btn = document.getElementById('actionBtnSmall');
+                btn.disabled = true;
+                btn.innerText = 'Locating...';
+                
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            try {
+                                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+                                const data = await response.json();
+                                let locName = "";
+                                if (data && data.display_name) {
+                                    let parts = data.display_name.split(',');
+                                    locName = parts.slice(0, Math.min(3, parts.length)).join(',').trim();
+                                }
+                                document.getElementById('geo-location-small').value = locName || `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
+                            } catch (e) {
+                                document.getElementById('geo-location-small').value = `${lat.toFixed(2)}, ${lng.toFixed(2)}`;
+                            }
+                            htmx.trigger('#attendance-form-small', 'submit');
+                        },
+                        (error) => {
+                            htmx.trigger('#attendance-form-small', 'submit');
+                        },
+                        { timeout: 5000 }
+                    );
+                } else {
+                    htmx.trigger('#attendance-form-small', 'submit');
+                }
+            }
+        </script>
+    {% else %}
+        <div style="background-color: rgba(255,255,255,0.2); text-align: center; padding: 12px; border-radius: 16px; color: white; font-weight: 800; font-size: 0.85rem; backdrop-filter: blur(4px);">
+            Done for today!
+        </div>
+    {% endif %}
+</div>

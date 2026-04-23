@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Attendance Summary - HR Portal{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <header class="flex justify-between items-center">
+        <h1 class="text-3xl font-bold text-gray-900">Attendance Summary</h1>
+        <div class="flex space-x-4">
+            <a href="{% url 'attendance:export_csv' %}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition inline-block">Export CSV</a>
+        </div>
+    </header>
+
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500 tracking-wider">Date</th>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500 tracking-wider">Employee</th>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500 tracking-wider">Morning In</th>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500 tracking-wider">Lunch Out</th>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500 tracking-wider">Afternoon In</th>
+                    <th class="px-6 py-4 text-xs font-semibold uppercase text-gray-500 tracking-wider">Final Out</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for attendance in attendances %}
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ attendance.date }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-semibold">{{ attendance.user.username }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ attendance.morning_check_in|time:"H:i"|default:"--" }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ attendance.lunch_check_out|time:"H:i"|default:"--" }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ attendance.afternoon_check_in|time:"H:i"|default:"--" }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ attendance.final_check_out|time:"H:i"|default:"--" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-gray-500 italic">No attendance records found.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

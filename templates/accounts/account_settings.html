@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Account Settings - Techwing HR{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-8">
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="px-8 py-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div>
+                <h2 class="text-xl font-extrabold text-slate-800">Account Settings</h2>
+                <p class="text-sm font-semibold text-slate-500 mt-1">Update your personal information</p>
+            </div>
+            <a href="{% url 'dashboard:home' %}" class="text-sm font-bold text-indigo-600 hover:text-indigo-700">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+        
+        <div class="p-8">
+            {% if messages %}
+                {% for message in messages %}
+                <div class="mb-6 p-4 rounded-xl {% if message.tags == 'success' %}bg-teal-50 text-teal-800 border border-teal-200{% else %}bg-blue-50 text-blue-800 border border-blue-200{% endif %}">
+                    <p class="text-sm font-semibold">{{ message }}</p>
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                <div class="space-y-2">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-bold text-slate-700">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p class="text-xs text-slate-500 font-medium">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <p class="text-xs font-bold text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                
+                <div class="pt-6 border-t border-slate-100 flex justify-end gap-4">
+                    <a href="{% url 'dashboard:home' %}" class="px-6 py-3 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 transition-colors">
+                        Cancel
+                    </a>
+                    <button type="submit" class="px-6 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-200">
+                        Save Changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
