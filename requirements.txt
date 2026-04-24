@@ -3,5 +3,6 @@ django-htmx
 django-tailwind-cli
 python-dotenv
 whitenoise
+gunicorn
 numpy
 pandas

@@ -29,7 +29,18 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-w(7k)25qubb7gw7qtsg4s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',') if os.environ.get('ALLOWED_HOSTS') else []
+# ALLOWED_HOSTS: reads from env var, with safe defaults
+_allowed = os.environ.get('ALLOWED_HOSTS', '')
+ALLOWED_HOSTS = [h.strip() for h in _allowed.split(',') if h.strip()] if _allowed else [
+    'localhost',
+    '127.0.0.1',
+    '.onrender.com',   # covers all *.onrender.com subdomains
+]
+
+# Required for CSRF to work behind Render's HTTPS proxy
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
+]
 
 # Application definition
 
