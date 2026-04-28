@@ -6,3 +6,5 @@ whitenoise
 gunicorn
 numpy
 pandas
+dj-database-url
+psycopg2-binary
